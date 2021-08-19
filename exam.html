@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <title>Exam</title>
+    </head>
+    <body>
+        <h3>Receive from database and insert into the server</h3>
+        <div id="div"></div>
+        <script>
+            var x =new XMLHttpRequest();
+                x.onreadystatechange = function () {
+                    if (x.readyState == 4 && x.status == 200) {
+                        var xdocs = x.responseXML;
+                        
+                        parse(xdocs);
+                    }
+                };
+                x.open("GET","exam.xml",true);
+                x.send();
+
+
+                function parse(xdocs){
+                    var b=xdocs.getElementsByTagName("book");
+                    var arr=new Array(b.length);
+                    console.log(b);
+                    for(var i=0;i<b.length;i++){
+                        var bookid=b[i].getAttribute("id");
+                        var title=b[i].getElementsByTagName("title")[0].childNodes[0].value;
+                        var author=b[i].getElementsByTagName("author")[0].childNodes[0].value;
+                        var price=b[i].getElementsByTagName("price")[0].childNodes[0].value;
+                        arr[i]=new Array(4);
+                        arr[i][0]=bookid;
+                        arr[i][1]=title;
+                        arr[i][2]=author;
+                        arr[i][3]=price;
+                    }
+                    var x =new XMLHttpRequest();
+                    x.onreadystatechange = function () {
+                    if (x.readyState == 4 && x.status == 200) {
+                        var text = x.responseText;
+                        document.getElementById("div").innerHTML=text;
+                    }
+                };
+                    x.open("POST","exam.php",true);
+                    x.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    x.send("arr=arr");
+                }
+        </script>
+    </body>
+</html>
